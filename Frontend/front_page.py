@@ -60,3 +60,17 @@ if st.button("Send to Backend"):
             st.json(result)
     else:
         st.warning("Please enter some text")
+
+st.divider()
+
+# File uploader
+st.header("File Uploader")
+file = st.file_uploader("Upload a file")
+if st.button("Send File to Backend"):
+    if file:
+        result = call_post_file_upload(file)
+        if result:
+            st.success("✅ Data sent and received!")
+            st.json(result)
+        else:
+            st.warning("No file detected")
