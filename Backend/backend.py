@@ -2,10 +2,15 @@
 Bare Minimum FastAPI Backend
 This is the absolute simplest FastAPI setup that connects to a frontend
 """
-
+# API import statements
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
+# Printing import statements
+from printrun.printcore import printcore
+from printrun import gcoder
+import time
 
 # ============= SETUP =============
 
@@ -19,6 +24,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+printer1 = printcore('COM3', 115200)
 
 # ============= SCHEMAS =============
 
