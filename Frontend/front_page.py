@@ -5,6 +5,7 @@ This is the absolute simplest Streamlit setup that connects to a backend
 
 import streamlit as st
 import requests
+import base64
 
 # ============= CONFIGURATION =============
 
@@ -28,6 +29,19 @@ def call_post_endpoint(text: str):
         response = requests.post(
             f"{API_URL}/api/data",
             json={"text": text}
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"API Error: {e}")
+        return None
+
+def call_post_file_upload(file):
+    """Call the file POST endpoint"""
+    try:
+        response = requests.post(
+            f"{API_URL}/api/file",
+            files={"file": file}
         )
         response.raise_for_status()
         return response.json()

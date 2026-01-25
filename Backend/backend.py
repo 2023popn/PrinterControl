@@ -3,7 +3,7 @@ Bare Minimum FastAPI Backend
 This is the absolute simplest FastAPI setup that connects to a frontend
 """
 # API import statements
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-printer1 = printcore('COM3', 115200)
+#printer1 = printcore('COM3', 115200)
 
 # ============= SCHEMAS =============
 
@@ -53,6 +53,14 @@ def post_data(msg: Message):
     return {
         "received": msg.text,
         "processed": msg.text.upper()
+    }
+
+@app.post("/api/file")
+def post_file(file: UploadFile):
+    """POST endpoint to recieve a file"""
+    return {
+        "received": file.filename,
+        "processed": file.filename.upper()
     }
 
 # ============= RUN =============
