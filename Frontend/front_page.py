@@ -6,6 +6,7 @@ This is the absolute simplest Streamlit setup that connects to a backend
 import streamlit as st
 import requests
 import base64
+import json
 
 # ============= CONFIGURATION =============
 
@@ -17,6 +18,26 @@ def call_get_endpoint():
     """Call a GET endpoint"""
     try:
         response = requests.get(f"{API_URL}/api/data")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"API Error: {e}")
+        return None
+
+def call_get_next_file_endpoint():
+    """Call next file endpoint"""
+    try:
+        response = requests.get(f"{API_URL}/api/next")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"API Error: {e}")
+        return None
+
+def call_print_next_file_endpoint():
+    """Call print file endpoint"""
+    try:
+        response = requests.get(f"{API_URL}/api/print")
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -88,3 +109,23 @@ if st.button("Send File to Backend"):
             st.json(result)
         else:
             st.warning("No file detected")
+
+st.divider()
+
+# File printer
+st.header("Print next file")
+if st.button("Get next file from queue"):
+    result = call_get_next_file_endpoint()
+    if result:
+        st.success("✅ Next file sent and received!")
+        st.json(result)
+    else:
+        st.warning("Fail")
+
+if st.button("Print this file"):
+    result = call_print_next_file_endpoint()
+    if result:
+        st.success("✅ Next file printed!")
+        st.json(result)
+    else:
+        st.warning("Fail")

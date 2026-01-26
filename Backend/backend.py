@@ -12,6 +12,12 @@ from printrun.printcore import printcore
 from printrun import gcoder
 import time
 
+# File managing import statements
+from fileManager import addToQueue, getNextFileInQueue, getQueueSize
+
+# Printing import statements
+from printer import loadNextFileToPrint, printNextFileToPrint
+
 # ============= SETUP =============
 
 app = FastAPI()
@@ -42,9 +48,24 @@ def root():
 @app.get("/api/data")
 def get_data():
     """Example GET endpoint"""
+    currentQueueSize = getQueueSize()
     return {
         "message": "Hello from backend!",
-        "count": 42
+        "count": currentQueueSize
+    }
+
+@app.get("/api/next")
+def get_next():
+    nextFile = getNextFileInQueue()
+    loadNextFileToPrint(nextFile)
+    return {
+        "file": nextFile
+    }
+@app.get("/api/print")
+def print_next():
+    success = printNextFileToPrint()
+    return {
+        "printCommunicationSuccessful" : success
     }
 
 @app.post("/api/data")
@@ -58,6 +79,7 @@ def post_data(msg: Message):
 @app.post("/api/file")
 def post_file(file: UploadFile):
     """POST endpoint to recieve a file"""
+    addToQueue(file)
     return {
         "received": file.filename,
         "processed": file.filename.upper()
