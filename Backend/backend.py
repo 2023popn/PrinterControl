@@ -13,7 +13,7 @@ from printrun import gcoder
 import time
 
 # File managing import statements
-from fileManager import addToQueue, getNextFileInQueue, getQueueSize
+from fileManager import add_to_queue, get_next_file_in_queue, get_queue_size
 
 # Printing import statements
 from printer import loadNextFileToPrint, printNextFileToPrint
@@ -48,7 +48,7 @@ def root():
 @app.get("/api/data")
 def get_data():
     """Example GET endpoint"""
-    currentQueueSize = getQueueSize()
+    currentQueueSize = get_queue_size()
     return {
         "message": "Hello from backend!",
         "count": currentQueueSize
@@ -56,7 +56,7 @@ def get_data():
 
 @app.get("/api/next")
 def get_next():
-    nextFile = getNextFileInQueue()
+    nextFile = get_next_file_in_queue()
     loadNextFileToPrint(nextFile)
     return {
         "file": nextFile
@@ -79,7 +79,7 @@ def post_data(msg: Message):
 @app.post("/api/file")
 def post_file(file: UploadFile):
     """POST endpoint to recieve a file"""
-    addToQueue(file)
+    add_to_queue(file)
     return {
         "received": file.filename,
         "processed": file.filename.upper()
