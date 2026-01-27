@@ -18,6 +18,18 @@ class Queue(list):
     def size(self):
         return len(self)
 
+class PrinterFile:
+    def __init__(self, file):
+        self.file = file
+        self.print_time = self.read_print_time()
+
+    def read_print_time(self):
+        with open(self.file, 'r', encoding='utf-8') as file:
+            for line in file:
+                if "TIME" in line:
+                    seconds = int(line.split(":")[1].strip())
+                    return
+
 
 # Queue of files to print, at most 5
 queue = Queue(5)
@@ -41,3 +53,5 @@ def get_queue_size():
 
 def get_full_queue():
     return queue
+
+# Functions for getting information from files
