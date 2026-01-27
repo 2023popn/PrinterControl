@@ -24,6 +24,19 @@ def call_get_endpoint():
         st.error(f"API Error: {e}")
         return None
 
+def call_post_endpoint(text: str):
+    """Call a POST endpoint"""
+    try:
+        response = requests.post(
+            f"{API_URL}/api/data",
+            json={"text": text}
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"API Error: {e}")
+        return None
+
 def call_get_next_file_endpoint():
     """Call next file endpoint"""
     try:
@@ -38,19 +51,6 @@ def call_print_next_file_endpoint():
     """Call print file endpoint"""
     try:
         response = requests.get(f"{API_URL}/api/print")
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"API Error: {e}")
-        return None
-
-def call_post_endpoint(text: str):
-    """Call a POST endpoint"""
-    try:
-        response = requests.post(
-            f"{API_URL}/api/data",
-            json={"text": text}
-        )
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
