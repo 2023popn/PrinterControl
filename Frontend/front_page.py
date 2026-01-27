@@ -1,3 +1,6 @@
+import streamlit
+
+"Hello World"
 """
 Bare Minimum Streamlit Frontend
 This is the absolute simplest Streamlit setup that connects to a backend
