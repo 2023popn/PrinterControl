@@ -13,7 +13,7 @@ from printrun import gcoder
 import time
 
 # File managing import statements
-from fileManager import add_to_queue, get_next_file_in_queue, get_queue_size
+from fileManager import *
 
 # Printing import statements
 from printer import loadNextFileToPrint, printNextFileToPrint
@@ -61,6 +61,14 @@ def get_next():
     return {
         "file": nextFile
     }
+
+@app.get("/api/queue")
+def get_queue():
+    queue = get_full_queue()
+    return {
+        "queue": queue
+    }
+
 @app.get("/api/print")
 def print_next():
     success = printNextFileToPrint()

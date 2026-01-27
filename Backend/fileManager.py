@@ -38,3 +38,6 @@ def get_next_file_in_queue():
 # Return the queue
 def get_queue_size():
     return queue.size()
+
+def get_full_queue():
+    return queue

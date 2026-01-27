@@ -7,6 +7,7 @@ import streamlit as st
 import requests
 import base64
 import json
+from pandas import DataFrame
 
 # ============= CONFIGURATION =============
 
@@ -41,6 +42,16 @@ def call_get_next_file_endpoint():
     """Call next file endpoint"""
     try:
         response = requests.get(f"{API_URL}/api/next")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"API Error: {e}")
+        return None
+
+def call_get_full_queue_endpoint():
+    """Call next file endpoint"""
+    try:
+        response = requests.get(f"{API_URL}/api/queue")
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -127,5 +138,17 @@ if st.button("Print this file"):
     if result:
         st.success("✅ Next file printed!")
         st.json(result)
+    else:
+        st.warning("Fail")
+
+st.divider()
+
+# Queue List
+st.header("Queue")
+if st.button("Get full queue"):
+    result = call_get_full_queue_endpoint()
+    queue = result['queue']
+    if result:
+        st.dataframe(queue)
     else:
         st.warning("Fail")
