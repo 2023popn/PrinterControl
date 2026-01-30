@@ -5,9 +5,9 @@ import asyncio
 from fileManager import *
 
 class Printer:
-    def __init__(self, printer_queue: Queue, port: str, baud: int, connection_timeout : int = 10):
+    def __init__(self, port: str, baud: int, connection_timeout : int = 10, max_queue_size: int = 0):
         self.connection_timeout = connection_timeout
-        self.printer_queue = printer_queue
+        self.printer_queue = Queue(max_queue_size)
         self.port = port
         self.baud = baud
 
@@ -44,13 +44,18 @@ class Printer:
         while not self.printer.online:
             await asyncio.sleep(0.1)
 
+    def disconnect(self):
+        self.printer.disconnect()
 
+    def full(self):
+        return self.printer_queue.full()
 
-def loadNextFileToPrint(file):
-    nextFileToPrint[0] = file
+    def empty(self):
+        return self.printer_queue.empty()
 
-def printNextFileToPrint():
-    # printrun
-    if (nextFileToPrint[0]):
-        return True
-    return False
+    def add_to_queue(self, element):
+        return self.printer_queue.put(element)
+
+    def queue_size(self):
+        return self.printer_queue.size()
+

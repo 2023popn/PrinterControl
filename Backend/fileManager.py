@@ -7,7 +7,9 @@ class Queue(list):
         self.maxsize = maxsize
 
     def full(self):
-        return len(self) >= self.maxsize
+        if self.maxsize > 0:
+            return len(self) >= self.maxsize
+        return False
 
     def empty(self):
         return len(self) == 0
@@ -23,6 +25,7 @@ class PrinterFile:
     def __init__(self, file):
         self.file = file
         self.print_time = self.read_print_time()
+        self.target_printer = self.get_target_printer()
 
     def read_print_time(self) -> int | None:
         with open(self.file, 'r', encoding='utf-8') as file:
@@ -31,6 +34,11 @@ class PrinterFile:
                     seconds = int(line.split(":")[1].strip())
                     return seconds
             return None
+
+    def get_target_printer(self) -> str | None:
+        filename = self.file.filename
+        return filename.split("_")[0]
+
 
 
 # Queue of files to print, at most 5

@@ -16,7 +16,7 @@ import time
 from fileManager import *
 
 # Printing import statements
-from printer import loadNextFileToPrint, printNextFileToPrint
+from printer import *
 
 # ============= SETUP =============
 
@@ -31,7 +31,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#printer1 = printcore('COM3', 115200)
+# ============= Printers =============
+
+crm4 = Printer('COM3', 115200)
 
 # ============= SCHEMAS =============
 
@@ -54,6 +56,7 @@ def get_data():
         "count": currentQueueSize
     }
 
+"""
 @app.get("/api/next")
 def get_next():
     nextFile = get_next_file_in_queue()
@@ -61,19 +64,13 @@ def get_next():
     return {
         "file": nextFile
     }
+"""
 
 @app.get("/api/queue")
 def get_queue():
     queue = get_full_queue()
     return {
         "queue": queue
-    }
-
-@app.get("/api/print")
-def print_next():
-    success = printNextFileToPrint()
-    return {
-        "printCommunicationSuccessful" : success
     }
 
 @app.post("/api/data")
