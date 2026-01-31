@@ -1,18 +1,26 @@
 """Printrun logic here"""
 from printrun.printcore import printcore
+from printrun import gcoder
+import time
 import asyncio
 
 from fileManager import *
 
 class Printer:
-    def __init__(self, port: str, baud: int, connection_timeout : int = 10, max_queue_size: int = 0):
-        self.connection_timeout = connection_timeout
-        self.printer_queue = Queue(max_queue_size)
+    def __init__(self, port: str, baud: int, connection_timeout : int = 10, name : str = None, max_queue_size: int = 0):
+        self.printer = printcore()
+        self.printer.onlinecb = self.handle_printer_online
+        self.printer.recvcb = self.handle_printer_response
+        self.printer.endcb = self.handle_print_complete
+
         self.port = port
         self.baud = baud
-
-        # Initiallize printcore
-        self.printer = printcore()
+        self.connection_timeout = connection_timeout
+        self.name = name or f"Printer-{port}"
+        self.queue = Queue(max_queue_size)
+        self.is_connected = False
+        self.is_printing = False
+        self.printer_id = None  # Will be set when added to list
 
         # TODO Setup callbacks
 
@@ -47,15 +55,41 @@ class Printer:
     def disconnect(self):
         self.printer.disconnect()
 
-    def full(self):
-        return self.printer_queue.full()
+    async def add_to_queue(self, file: PrinterFile):
+        """Add file to queue"""
+        self.queue.put(file)
 
-    def empty(self):
-        return self.printer_queue.empty()
+        if not self.is_connected and not self.printer.online:
+            try:
+                await self.connect_printer_with_timeout()
+            except ConnectionError as e:
+                self.queue.remove(file)
+                raise
 
-    def add_to_queue(self, element):
-        return self.printer_queue.put(element)
+    def get_status(self):
+        """Get printer status as dict"""
+        return {
+            "id": self.printer_id,
+            "name": self.name,
+            "port": self.port,
+            "queue_length": len(self.queue),
+            "is_connected": self.is_connected,
+            "is_printing": self.is_printing,
+            "printer_online": self.printer.online
+        }
 
-    def queue_size(self):
-        return self.printer_queue.size()
+    # ========== Callbacks ===========
 
+    def handle_printer_online(self):
+        """Callback when printer connects"""
+        print(f"{self.name} is online!")
+        self.is_connected = True
+
+    def handle_printer_response(self, line):
+        """Handle printer responses"""
+        print(f"{self.name}: {line}")
+
+    def handle_print_complete(self):
+        """Callback when print ends"""
+        self.is_printing = False
+        print(f"{self.name} print complete!")
