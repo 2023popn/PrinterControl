@@ -93,3 +93,18 @@ class Printer:
         """Callback when print ends"""
         self.is_printing = False
         print(f"{self.name} print complete!")
+
+    # ========== JSON Dictionary ===========
+    def to_dict(self):
+        """Convert printer object to JSON-compatible dictionary"""
+        return {
+            "id": self.printer_id,
+            "name": self.name,
+            "port": self.port,
+            "baud": self.baud,
+            "is_connected": self.is_connected,
+            "is_printing": self.is_printing,
+            "printer_online": self.printer.online,
+            "connection_timeout": self.connection_timeout,
+            # Add any other fields you want to send
+        }
