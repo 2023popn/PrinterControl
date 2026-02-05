@@ -105,7 +105,7 @@ async def add_printer(config: PrinterConfig):
 async def list_printers():
     """List all printer instances"""
     return {
-        "printers": [p.get_status() for p in printers],
+        "printers": printers,
         "total": len(printers)
     }
 

@@ -182,3 +182,26 @@ if response.status_code == 200:
                     if delete_response.status_code == 200:
                         st.success("Printer removed!")
                         st.rerun()
+
+# ====== Real display formatting ======
+printer_information = requests.get(f"{API_URL}/printers")
+num_printers = printer_information["total"]
+printers = printer_information["printers"]
+
+st.write(printer_information)
+
+
+def generate_printer_information():
+    columns_list = st.columns(num_printers)
+
+    for printer_index in num_printers:
+        printer = printers[printer_index]
+        with columns_list[printer_index]:
+            st.header("Printer Information")
+            st.write("Printer name: " + printer["name"])
+
+
+if num_printers != 0:
+    generate_printer_information()
+
+
